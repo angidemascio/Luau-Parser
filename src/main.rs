@@ -1,9 +1,10 @@
 use self::lexer::{Lexer, TokenType};
 
 mod lexer;
+mod syntax_tree;
 
 fn main() {
-    let mut lexer = Lexer::new("_av4");
+    let mut lexer = Lexer::new("local example = 1000");
 
     loop {
         let token = lexer.next();

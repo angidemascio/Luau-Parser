@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenType {
     Name,
     Number,
@@ -21,6 +21,7 @@ pub struct Token<'source> {
     pub contents: &'source str,
 }
 
+#[derive(Clone)]
 pub struct Lexer<'source> {
     source: &'source [u8],
 }
@@ -48,7 +49,7 @@ impl<'source> Lexer<'source> {
         let (mut index, mut character) = iterator.next()?;
 
         if character.is_ascii_digit() {
-            while character.is_ascii_digit() && iterator.len() != 0 {
+            while character.is_ascii_digit() {
                 if let Some((index_2, character_2)) = iterator.next() {
                     (index, character) = (index_2, character_2);
                 } else {
@@ -61,7 +62,7 @@ impl<'source> Lexer<'source> {
             if character == b'.' {
                 (index, character) = iterator.next()?;
 
-                while character.is_ascii_digit() && iterator.len() != 0 {
+                while character.is_ascii_digit() {
                     if let Some((index_2, character_2)) = iterator.next() {
                         (index, character) = (index_2, character_2);
                     } else {
@@ -141,5 +142,33 @@ impl<'source> Lexer<'source> {
 
             _ => self.read_others(),
         }
+    }
+
+    pub fn peek(&self) -> Token<'source> {
+        let mut lexer = self.clone();
+
+        lexer.next()
+    }
+
+    fn next_if_just(&mut self, token_type: TokenType) -> Option<&'source str> {
+        let token = self.peek();
+
+        if token.token_type == token_type {
+            self.next();
+
+            Some(token.contents)
+        } else {
+            None
+        }
+    }
+
+    pub fn next_if(&mut self, token_type: TokenType) -> Option<&'source str> {
+        self.skip_whitespace();
+
+        self.next_if_just(token_type)
+    }
+
+    pub fn skip_whitespace(&mut self) {
+        while self.next_if_just(TokenType::Whitespace).is_some() {}
     }
 }
