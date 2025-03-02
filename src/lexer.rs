@@ -144,14 +144,18 @@ impl<'source> Lexer<'source> {
         }
     }
 
-    pub fn peek(&self) -> Token<'source> {
+    pub fn peek(&self, index: u8) -> Token<'source> {
         let mut lexer = self.clone();
+
+        for _ in 0..index {
+            lexer.next();
+        }
 
         lexer.next()
     }
 
     fn next_if_just(&mut self, token_type: TokenType) -> Option<&'source str> {
-        let token = self.peek();
+        let token = self.peek(0);
 
         if token.token_type == token_type {
             self.next();

@@ -1,6 +1,7 @@
 use self::lexer::{Lexer, TokenType};
 
 mod lexer;
+mod parser;
 mod syntax_tree;
 
 fn main() {

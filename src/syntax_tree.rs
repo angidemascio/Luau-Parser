@@ -74,5 +74,5 @@ pub enum Statement {
 }
 
 pub struct Program {
-    statements: Vec<Statement>,
+    pub statements: Vec<Statement>,
 }
